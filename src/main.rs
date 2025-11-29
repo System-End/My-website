@@ -74,6 +74,7 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/api")
                     .route("/repos", web::get().to(api::github::get_repos))
                     .route("/health", web::get().to(api::health::health_check))
+                    .route("/lastfm", web::get().to(api::lastfm::get_current_track))
             )
             // Static files (CSS, JS, images)
             .service(fs::Files::new("/static", "./static").show_files_listing())

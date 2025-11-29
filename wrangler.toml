@@ -1,17 +1,19 @@
 name = "personal-site"
-main = "src/worker/index.ts"
 compatibility_date = "2024-02-01"
 
-[build]
-command = "npm run build:worker"
+# Cloudflare Pages configuration
+# Deploy using: npx wrangler pages deploy dist
 
+[vars]
+GITHUB_USERNAME = "System-End"
+
+# Environment-specific settings
 [env.production]
-name = "personal-site"
 vars = { ENVIRONMENT = "production" }
 
-[env.development]
-name = "personal-site-dev"
-vars = { ENVIRONMENT = "development" }
+[env.preview]
+vars = { ENVIRONMENT = "preview" }
 
-[dev]
-port = 8787
+# Note: LASTFM_API_KEY and LASTFM_USERNAME should be set as secrets
+# Use: npx wrangler pages secret put LASTFM_API_KEY
+# Use: npx wrangler pages secret put LASTFM_USERNAME

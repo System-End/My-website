@@ -4,6 +4,15 @@ version = "0.1.0"
 edition = "2021"
 description = "Personal website built with Rust and Actix-web"
 authors = ["EndofTimee"]
+default-run = "personal-site"
+
+[[bin]]
+name = "personal-site"
+path = "src/main.rs"
+
+[[bin]]
+name = "static-gen"
+path = "src/bin/static_gen.rs"
 
 [dependencies]
 actix-web = "4"
