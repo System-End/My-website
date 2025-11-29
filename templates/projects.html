@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="page-container animate-fade-in">
+    <div class="fox-card header-card">
+        <h1 class="text-glow">My Projects</h1>
+        <p class="text-gradient">Exploring code, one repo at a time</p>
+    </div>
+
+    <div id="repos-container" class="content-grid">
+        <div class="loading-container">
+            <div class="loading-fox">
+                <div class="loading-spinner"></div>
+                <p>Loading repositories...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadRepos() {
+        const container = document.getElementById('repos-container');
+        
+        try {
+            const response = await fetch('/api/repos');
+            if (!response.ok) throw new Error('Failed to fetch repos');
+            
+            const repos = await response.json();
+            
+            if (repos.length === 0) {
+                container.innerHTML = '<div class="fox-card"><p>No repositories found.</p></div>';
+                return;
+            }
+            
+            container.innerHTML = repos.map(repo => `
+                <div class="fox-card repo-card">
+                    <div class="repo-header">
+                        <h3 class="repo-name">${escapeHtml(repo.name)}</h3>
+                        <span class="repo-language">${escapeHtml(repo.language)}</span>
+                    </div>
+                    <p class="repo-description">${escapeHtml(repo.description) || 'No description available'}</p>
+                    <div class="repo-stats">
+                        <span class="repo-stat">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            ${repo.stars}
+                        </span>
+                        <span class="repo-stat">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="18" r="3"></circle>
+                                <circle cx="6" cy="6" r="3"></circle>
+                                <circle cx="18" cy="6" r="3"></circle>
+                                <path d="M18 9a9 9 0 01-9 9"></path>
+                                <path d="M6 9a9 9 0 009 9"></path>
+                            </svg>
+                            ${repo.forks}
+                        </span>
+                    </div>
+                    <a href="${escapeHtml(repo.url)}" class="repo-link" target="_blank" rel="noopener noreferrer">
+                        View on GitHub →
+                    </a>
+                </div>
+            `).join('');
+        } catch (error) {
+            container.innerHTML = `
+                <div class="fox-card error-card">
+                    <p>Oops! Something went wrong fetching the repositories.</p>
+                    <button onclick="loadRepos()" class="retry-button">Try Again</button>
+                </div>
+            `;
+        }
+    }
+    
+    function escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+    
+    // Load repos when the page loads
+    document.addEventListener('DOMContentLoaded', loadRepos);
+</script>
+{% endblock %}

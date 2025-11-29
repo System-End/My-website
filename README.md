@@ -1,130 +1,109 @@
-# Personal Website with Cloudflare Integration
+# Personal Website with Rust
 
 ## 🏗️ Architecture Overview
 
-This project implements a modern web application architecture leveraging Cloudflare's edge computing capabilities. The architecture consists of two primary components:
+This project implements a personal website built with Rust using Actix-web. The site features a fox-themed design with a responsive layout.
 
-1. **React Frontend**: A Single Page Application (SPA) built with React and TypeScript
-2. **Cloudflare Pages**: Static site hosting with global CDN distribution
+### Technology Stack
+
+- **Backend**: Rust with Actix-web
+- **Templating**: Askama (compile-time HTML templates)
+- **Styling**: Custom CSS with CSS variables for theming
+- **API**: GitHub repos integration
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v16.0.0 or higher)
-- npm (v7.0.0 or higher)
-- Cloudflare account
-- Last.fm account and API key
+- Rust (1.70.0 or higher)
+- Cargo (Rust package manager)
 - Git
-
-### API Keys Setup
-
-1. **Last.fm API Key**:
-   - Visit [Last.fm API Account Creation](https://www.last.fm/api/account/create)
-   - Sign in with your Last.fm account
-   - Fill in the application details
-   - Save your API key
-   - Your username can be found in your profile URL: last.fm/user/YOUR_USERNAME
-
-2. **Cloudflare Setup**:
-   - Create an account at [Cloudflare](https://dash.cloudflare.com/sign-up)
-   - Get your Account ID from the dashboard
-   - Create an API token with Pages deployment permissions
 
 ### Environment Setup
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/EndofTimee/personal-site
-cd personal-site
+git clone https://github.com/System-End/My-website
+cd My-website
 ```
 
-2. Create a `.env` file in the root directory:
+2. Create a `.env` file in the root directory (optional):
 ```env
-VITE_LASTFM_API_KEY=your_lastfm_api_key
-VITE_LASTFM_USERNAME=your_lastfm_username
-CLOUDFLARE_API_TOKEN=your_cloudflare_api_token
-CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
+HOST=127.0.0.1
+PORT=8080
+GITHUB_USERNAME=your_github_username
 ```
 
-3. Install dependencies:
+3. Build and run:
 ```bash
-npm install
+# Development
+cargo run
+
+# Release build
+cargo build --release
+./target/release/personal-site
 ```
 
 ## 💻 Local Development
 
 Start the development server:
 ```bash
-npm start
+cargo run
 ```
 
-The application will be available at http://localhost:3000
+The application will be available at http://localhost:8080
 
+### Project Structure
 
-
-## 🌐 Deployment
-
-### Automated Deployment
-
-The project includes a PowerShell deployment script:
-
-```bash
-npm run deploy
+```
+.
+├── Cargo.toml          # Rust dependencies
+├── src/
+│   ├── main.rs         # Application entry point and routes
+│   ├── templates.rs    # Template definitions
+│   └── api/
+│       ├── mod.rs      # API module exports
+│       ├── github.rs   # GitHub repos API
+│       └── health.rs   # Health check endpoint
+├── templates/          # HTML templates
+│   ├── base.html       # Base layout
+│   ├── about.html      # About page
+│   ├── projects.html   # Projects page
+│   └── 404.html        # Not found page
+├── static/             # Static assets
+│   └── styles.css      # CSS styles
+└── public/             # Public assets (images, logos)
 ```
 
-This script:
-1. Loads environment variables
-2. Installs dependencies
-3. Builds the React application
-4. Deploys to Cloudflare Pages
-5. Sets up environment secrets
+## 🌐 API Endpoints
 
-### Manual Deployment Steps
-
-If you need to deploy manually:
-
-```bash
-npm run build
-npx wrangler pages deploy ./dist
-```
-
-### Environment Configuration
-
-#### Cloudflare Pages Configuration:
-
-1. Build settings:
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-   - Node.js version: 16 (or higher)
-
-2. Environment variables:
-   - Production branch: `main`
-   - Preview branches: `dev/*`
+- `GET /` - About page
+- `GET /projects` - Projects page
+- `GET /api/repos` - Fetch GitHub repositories
+- `GET /api/health` - Health check
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
 1. Build Issues:
-   ```bash
-   # Clear dependency cache
-   rm -rf node_modules
-   npm clean-cache --force
-   npm install
-   ```
+```bash
+# Clean and rebuild
+cargo clean
+cargo build
+```
 
-2. Environment Variables:
-   ```bash
-   # Verify environment variables
-   npx wrangler secret list
-   ```
+2. Port already in use:
+```bash
+# Change port in .env file
+PORT=3000
+```
 
 ## 📚 Additional Resources
 
-- [Cloudflare Pages Documentation](https://developers.cloudflare.com/pages/)
-- [Last.fm API Documentation](https://www.last.fm/api)
-- [React Documentation](https://reactjs.org/docs/getting-started.html)
+- [Actix-web Documentation](https://actix.rs/docs/)
+- [Askama Templates](https://djc.github.io/askama/)
+- [Rust Documentation](https://doc.rust-lang.org/)
 
 ## 🤝 Contributing
 
@@ -137,3 +116,7 @@ npx wrangler pages deploy ./dist
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Legacy React Version
+
+The original React/TypeScript version of the site can be found in the `old-frontend-src` directory for reference.
