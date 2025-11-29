@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="/public/logo.svg">
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/boot-animation.css">
     
     <meta name="description" content="EndofTimee's personal site – developer, streamer, and more. Featuring a unique boot animation and fox-themed design.">
     <meta property="og:title" content="EndofTimee – Personal Site">
@@ -23,7 +24,103 @@
     <meta name="twitter:image" content="/public/logo.svg">
 </head>
 <body>
-    <div class="min-h-screen bg-background-primary">
+    <!-- EndOS Boot Animation -->
+    <div id="endos-boot-container" class="endos-boot-container">
+        <div class="visually-hidden">
+            Website loading. EndOS boot sequence in progress.
+        </div>
+
+        <div class="boot-scan-line"></div>
+
+        <div class="boot-visor-frame">
+            <div class="visor-left-ear"></div>
+            <div class="visor-right-ear"></div>
+
+            <div class="boot-visor">
+                <div class="visor-line top"></div>
+                <div class="visor-line bottom"></div>
+
+                <div id="boot-content" class="boot-content">
+                    <!-- BIOS Check -->
+                    <div id="stage-bios" class="boot-stage bios">
+                        <div class="bios-header">END_OS BIOS v2.5</div>
+                        <div class="boot-text-line">Initializing hardware...</div>
+                        <div class="boot-text-line">CPU: ProtoCore i9 @ 4.7GHz</div>
+                        <div class="boot-text-line">Memory: 16GB NeuralRAM</div>
+                        <div class="boot-text-line">Checking system integrity... OK</div>
+                        <div class="boot-text-line">Starting boot sequence...</div>
+                    </div>
+
+                    <!-- System Scan -->
+                    <div id="stage-scan" class="boot-stage scan">
+                        <div class="scan-header">SYSTEM SCAN</div>
+                        <div class="scan-progress-container">
+                            <div class="scan-progress-bar"></div>
+                        </div>
+                        <div class="scan-detail">Checking vital systems...</div>
+                        <div class="scan-detail">Initializing neural pathways...</div>
+                        <div class="scan-detail">Activating sensory modules...</div>
+                        <div class="scan-detail">All systems nominal</div>
+                    </div>
+
+                    <!-- Module Loading -->
+                    <div id="stage-modules" class="boot-stage modules">
+                        <div class="module-header">LOADING CORE MODULES</div>
+                        <div class="modules-grid">
+                            <div class="module-item">
+                                <div class="module-icon"></div>
+                                <div class="module-name">ProtogenCore</div>
+                            </div>
+                            <div class="module-item">
+                                <div class="module-icon"></div>
+                                <div class="module-name">NeuralNet</div>
+                            </div>
+                            <div class="module-item">
+                                <div class="module-icon"></div>
+                                <div class="module-name">VisorDisplay</div>
+                            </div>
+                            <div class="module-item">
+                                <div class="module-icon"></div>
+                                <div class="module-name">FoxTraits</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fox Protocol -->
+                    <div id="stage-fox" class="boot-stage fox-protocol">
+                        <div class="fox-header">ACTIVATING FOX PROTOCOLS</div>
+                        <div class="fox-trait">Fluffy tail module: Online</div>
+                        <div class="fox-trait">Fox ears: Calibrated</div>
+                        <div class="fox-trait">Cuteness factor: Nonexistent</div>
+                        <div class="fox-trait">Mischief subroutines: Loaded</div>
+                        <div class="fox-trait">ProtoFox integration: Complete</div>
+                    </div>
+
+                    <!-- Logo Display -->
+                    <div id="stage-logo" class="boot-stage logo-display">
+                        <div class="endos-logo">
+                            <span class="logo-end">End</span><span class="logo-os">OS</span>
+                        </div>
+                        <div class="logo-subtitle">ProtoFox Operating System</div>
+                    </div>
+
+                    <!-- System Ready -->
+                    <div id="stage-ready" class="boot-stage system-ready">
+                        <div class="ready-status">SYSTEM ACTIVATED</div>
+                        <div class="welcome-message">Welcome back, ProtoFox</div>
+                        <div class="boot-complete-message">EndOS v1.0 is fully operational</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="skip-button" class="skip-button" aria-label="Skip boot animation">
+            SKIP BOOT SEQUENCE
+        </button>
+    </div>
+
+    <!-- Main Site Content (hidden until boot completes) -->
+    <div id="main-site" class="min-h-screen bg-background-primary" style="display: none;">
         <!-- Background Logo -->
         <div class="background-logo">
             <img src="/public/logo.jpg" alt="Background Logo" class="logo-image">
@@ -83,6 +180,82 @@
     
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Boot Animation Controller
+        (function() {
+            const bootContainer = document.getElementById('endos-boot-container');
+            const mainSite = document.getElementById('main-site');
+            const bootContent = document.getElementById('boot-content');
+            const skipButton = document.getElementById('skip-button');
+            
+            // Check if we should skip the animation (already seen in this session)
+            const urlParams = new URLSearchParams(window.location.search);
+            const skipParam = urlParams.get('skipBoot');
+            const sessionSeen = sessionStorage.getItem('endos-boot-complete') === 'true';
+            
+            if (skipParam === 'true' || sessionSeen) {
+                completeAnimation();
+                return;
+            }
+            
+            // Boot sequence stages with timing
+            const bootSequence = [
+                { stage: 'bios', delay: 2500 },
+                { stage: 'scan', delay: 3000 },
+                { stage: 'modules', delay: 3000 },
+                { stage: 'fox', delay: 3000 },
+                { stage: 'logo', delay: 2500 },
+                { stage: 'ready', delay: 2000 }
+            ];
+            
+            let currentIndex = 0;
+            
+            function clearAllStages() {
+                document.querySelectorAll('.boot-stage').forEach(el => {
+                    el.classList.remove('active');
+                });
+            }
+            
+            function runNextStage() {
+                if (currentIndex < bootSequence.length) {
+                    const { stage, delay } = bootSequence[currentIndex];
+                    
+                    // Clear previous stages
+                    clearAllStages();
+                    
+                    // Short delay for transition
+                    setTimeout(() => {
+                        bootContent.classList.add('active');
+                        document.getElementById('stage-' + stage).classList.add('active');
+                    }, 200);
+                    
+                    currentIndex++;
+                    setTimeout(runNextStage, delay);
+                } else {
+                    // Animation complete
+                    setTimeout(completeAnimation, 500);
+                }
+            }
+            
+            function completeAnimation() {
+                bootContainer.style.display = 'none';
+                mainSite.style.display = 'block';
+                mainSite.style.opacity = '0';
+                mainSite.style.transition = 'opacity 0.5s ease-in-out';
+                
+                requestAnimationFrame(() => {
+                    mainSite.style.opacity = '1';
+                });
+                
+                sessionStorage.setItem('endos-boot-complete', 'true');
+            }
+            
+            // Skip button handler
+            skipButton.addEventListener('click', completeAnimation);
+            
+            // Start boot sequence after a short delay
+            setTimeout(runNextStage, 500);
+        })();
     </script>
     {% block scripts %}{% endblock %}
 </body>
